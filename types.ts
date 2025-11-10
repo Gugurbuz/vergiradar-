@@ -1,4 +1,4 @@
-export enum AnomalySeverity {
+export enum BulguSeverity {
   High = 'Yüksek',
   Medium = 'Orta',
   Low = 'Düşük',
@@ -11,7 +11,7 @@ export enum CaseStatus {
   Closed = 'Kapatıldı',
 }
 
-export enum AnomalyDomain {
+export enum BulguDomain {
   VAT = 'KDV',
   Invoice = 'Fatura',
   Payroll = 'Bordro',
@@ -33,6 +33,7 @@ export enum AuditStatus {
 
 export enum AuditDataStatus {
     Waiting = 'Bekleniyor',
+    Uploading = 'Yükleniyor',
     Uploaded = 'Yüklendi',
     Validated = 'Doğrulandı',
     Error = 'Hatalı',
@@ -46,10 +47,10 @@ export interface AuditedCompany {
 
 export interface Audit {
     id: string;
-    companyId: string;
+    company_id: string;
     title: string;
-    startDate: string;
-    endDate: string;
+    start_date: string;
+    end_date: string;
     status: AuditStatus;
 }
 
@@ -58,7 +59,7 @@ export interface AuditDataRecord {
     name: string;
     description: string;
     status: AuditDataStatus;
-    errorMessage?: string;
+    error_message?: string;
 }
 
 export interface RuleParameter {
@@ -70,16 +71,16 @@ export interface RuleParameter {
   unit?: string;
 }
 
-export interface Anomaly {
+export interface Bulgu {
   id: string;
-  ruleId: string; // Hangi kuralın bu anomaliyi bulduğunu belirtir
+  rule_id: string; // Hangi kuralın bu bulguyu bulduğunu belirtir
   description: string;
-  domain: AnomalyDomain;
-  severity: AnomalySeverity;
+  domain: BulguDomain;
+  severity: BulguSeverity;
   date: string;
   amount: number;
   details: Record<string, string>;
-  caseId?: string;
+  case_id?: string;
 }
 
 export interface Case {
@@ -87,19 +88,25 @@ export interface Case {
   title: string;
   status: CaseStatus;
   assignee: string;
-  severity: AnomalySeverity;
-  createdAt: string;
-  anomalyIds: string[];
+  severity: BulguSeverity;
+  created_at: string;
+  bulgu_ids: string[];
 }
 
 export interface Rule {
   id: string;
   description: string;
   category: string;
-  severity: AnomalySeverity;
-  requiredData: string; // Artık doğrudan AuditDataRecord.name ile eşleşecek
-  logicText: string;
-  pseudoCode: string;
+  severity: BulguSeverity;
+  required_data: string; // Artık doğrudan AuditDataRecord.name ile eşleşecek
+  logic_text: string;
+  pseudo_code: string;
   notes?: string;
   parameters?: RuleParameter[];
+}
+
+export interface RunResult {
+    found_bulgular: Bulgu[];
+    skipped_rules: Rule[];
+    run_rule_count: number;
 }

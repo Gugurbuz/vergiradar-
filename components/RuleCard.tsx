@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Rule, RuleParameter } from '../types';
 import Card from './shared/Card';
 import Badge from './shared/Badge';
-import { ChevronDownIcon, PencilIcon, CheckIcon, XIcon } from './icons';
+import { ChevronDown, Pencil, Check, X } from 'lucide-react';
 import RuleLogicFlow from './RuleLogicFlow';
 import RuleParameters from './RuleParameters';
 
@@ -65,15 +65,15 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, onUpdate }) => {
                 <div className="flex items-center space-x-2 flex-shrink-0 ml-auto">
                     {!isEditing ? (
                         <button onClick={handleEditToggle} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                            <PencilIcon className="h-5 w-5 text-gray-500" />
+                            <Pencil size={20} className="text-gray-500" />
                         </button>
                     ) : (
                         <>
                         <button onClick={handleSave} className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900 transition-colors">
-                            <CheckIcon className="h-5 w-5 text-green-500" />
+                            <Check size={20} className="text-green-500" />
                         </button>
                         <button onClick={handleCancel} className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors">
-                            <XIcon className="h-5 w-5 text-red-500" />
+                            <X size={20} className="text-red-500" />
                         </button>
                         </>
                     )}
@@ -83,7 +83,7 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, onUpdate }) => {
                         </span>
                         <Badge type={rule.severity} />
                     </div>
-                    <ChevronDownIcon className={`h-6 w-6 text-gray-500 transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`h-6 w-6 text-gray-500 transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                 </div>
             </div>
              <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[1500px]' : 'max-h-0'}`}>
@@ -102,13 +102,13 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, onUpdate }) => {
                         <h4 className="font-semibold text-gray-700 dark:text-gray-300">Mantık</h4>
                         {isEditing ? (
                             <textarea
-                                value={editableRule.logicText}
-                                onChange={(e) => handleInputChange('logicText', e.target.value)}
+                                value={editableRule.logic_text}
+                                onChange={(e) => handleInputChange('logic_text', e.target.value)}
                                 className={`${commonInputClasses} min-h-[80px] font-sans`}
                                 rows={3}
                             />
                         ) : (
-                            <p className="text-gray-600 dark:text-gray-400 mt-1">{rule.logicText}</p>
+                            <p className="text-gray-600 dark:text-gray-400 mt-1">{rule.logic_text}</p>
                         )}
                     </div>
                     <div>
@@ -116,30 +116,30 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, onUpdate }) => {
                          {isEditing ? (
                             <input
                                 type="text"
-                                value={editableRule.requiredData}
-                                onChange={(e) => handleInputChange('requiredData', e.target.value)}
+                                value={editableRule.required_data}
+                                onChange={(e) => handleInputChange('required_data', e.target.value)}
                                 className={`${commonInputClasses} font-mono text-sm`}
                             />
                         ) : (
-                            <p className="text-gray-600 dark:text-gray-400 mt-1 font-mono text-sm">{rule.requiredData}</p>
+                            <p className="text-gray-600 dark:text-gray-400 mt-1 font-mono text-sm">{rule.required_data}</p>
                         )}
                     </div>
                     <div>
                         <h4 className="font-semibold text-gray-700 dark:text-gray-300">Örnek Kod (SQL)</h4>
                         {isEditing ? (
                              <textarea
-                                value={editableRule.pseudoCode}
-                                onChange={(e) => handleInputChange('pseudoCode', e.target.value)}
+                                value={editableRule.pseudo_code}
+                                onChange={(e) => handleInputChange('pseudo_code', e.target.value)}
                                 className={`${commonInputClasses} min-h-[150px] font-mono text-sm`}
                                 rows={6}
                             />
                         ) : (
                             <div className="mt-2 bg-gray-900 rounded-lg p-4 overflow-x-auto">
                                 <pre className="text-sm text-gray-300 whitespace-pre-wrap">
-                                    <code>{rule.pseudoCode}</code>
+                                    <code>{rule.pseudo_code}</code>
                                 </pre>
                             </div>
-                        )}
+                            )}
                     </div>
                     { (isEditing || rule.notes) && (
                          <div>

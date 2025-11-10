@@ -1,5 +1,5 @@
 import React from 'react';
-import { DashboardIcon, BriefcaseIcon, AlertTriangleIcon, ArchiveIcon, CodeIcon } from './icons';
+import { LayoutDashboard, Briefcase, AlertTriangle, Archive, Code } from 'lucide-react';
 
 interface SidebarProps {
   activeView: string;
@@ -8,17 +8,17 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Pano', icon: DashboardIcon },
-    { id: 'auditCenter', label: 'Denetim Merkezi', icon: BriefcaseIcon },
-    { id: 'anomalies', label: 'Anomaliler', icon: AlertTriangleIcon },
-    { id: 'cases', label: 'Vakalar', icon: ArchiveIcon },
-    { id: 'rules', label: 'Kurallar', icon: CodeIcon },
+    { id: 'dashboard', label: 'Pano', icon: LayoutDashboard },
+    { id: 'auditCenter', label: 'Denetim Merkezi', icon: Briefcase },
+    { id: 'bulgular', label: 'Bulgular', icon: AlertTriangle },
+    { id: 'cases', label: 'Vakalar', icon: Archive },
+    { id: 'rules', label: 'Kurallar', icon: Code },
   ];
 
   return (
     <aside className="w-64 bg-gray-900 text-gray-300 flex flex-col fixed h-full">
       <div className="h-20 flex items-center justify-center border-b border-gray-800">
-        <AlertTriangleIcon className="h-8 w-8 text-red-500" />
+        <AlertTriangle className="h-8 w-8 text-red-500" />
         <h1 className="text-xl font-bold ml-2 text-white">Vergi Radar</h1>
       </div>
       <nav className="flex-1 px-4 py-6">
@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView }) => {
                     : 'hover:bg-gray-800 hover:text-white'
                 }`}
               >
-                <item.icon className="h-5 w-5 mr-3" />
+                <item.icon className="h-5 w-5 mr-3" strokeWidth={2.5} />
                 <span className="font-medium">{item.label}</span>
               </a>
             </li>

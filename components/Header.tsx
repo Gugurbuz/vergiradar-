@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDownIcon, BellIcon, UserCircleIcon, BriefcaseIcon } from './icons';
+import { ChevronDown, Bell, User, Briefcase } from 'lucide-react';
 import { Audit, AuditedCompany } from '../types';
 
 interface HeaderProps {
@@ -21,15 +21,15 @@ const Header: React.FC<HeaderProps> = ({ title, activeAudit, auditedCompanies })
                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{title}</h2>
                  {activeAudit && (
                     <div className="flex items-center text-sm text-red-600 dark:text-red-400 font-semibold mt-1">
-                        <BriefcaseIcon className="h-4 w-4 mr-2" />
-                        <span>Aktif Denetim: {activeAudit.title} ({getCompanyName(activeAudit.companyId)})</span>
+                        <Briefcase size={16} className="mr-2" />
+                        <span>Aktif Denetim: {activeAudit.title} ({getCompanyName(activeAudit.company_id)})</span>
                     </div>
                  )}
             </div>
             <div className="flex items-center space-x-6">
                 <div className="relative">
                     <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-                        <BellIcon className="h-6 w-6" />
+                        <Bell size={24} />
                     </button>
                     <span className="absolute -top-1 -right-1 flex h-3 w-3">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -39,9 +39,9 @@ const Header: React.FC<HeaderProps> = ({ title, activeAudit, auditedCompanies })
 
                 <div className="relative">
                     <button onClick={() => setProfileOpen(!isProfileOpen)} className="flex items-center space-x-2">
-                        <UserCircleIcon className="h-9 w-9 text-gray-600 dark:text-gray-300" />
+                        <User size={36} className="text-gray-600 dark:text-gray-300 p-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
                         <span className="hidden md:inline font-medium text-gray-700 dark:text-gray-200">Denetmen Yılmaz</span>
-                        <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+                        <ChevronDown size={20} className="text-gray-400" />
                     </button>
                     {isProfileOpen && (
                         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-10">

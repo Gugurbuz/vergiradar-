@@ -1,41 +1,101 @@
-
-import React from 'react';
-import { mockCases } from '../services/mockData';
-import Card from './shared/Card';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { Case, BulguSeverity, CaseStatus, BulguDomain } from '../types';
 import Badge from './shared/Badge';
+import * as api from '../services/api';
+import { AgGridReact } from 'ag-grid-react';
+import { ColDef } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { Download, Search } from 'lucide-react';
+
+const BadgeCellRenderer: React.FC<{ value: BulguSeverity | CaseStatus | BulguDomain }> = ({ value }) => <Badge type={value} />;
 
 const CaseList: React.FC = () => {
+  const [cases, setCases] = useState<Case[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const gridRef = useRef<AgGridReact<Case>>(null);
+  const [isDark, setIsDark] = useState(document.body.classList.contains('dark'));
+
+  useEffect(() => {
+      api.getCases()
+          .then(setCases)
+          .catch(err => setError('Vakalar yüklenemedi: ' + err.message))
+          .finally(() => setLoading(false));
+      
+      const observer = new MutationObserver(() => {
+          setIsDark(document.body.classList.contains('dark'));
+      });
+      observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      return () => observer.disconnect();
+  }, []);
+
+  const [columnDefs] = useState<ColDef<Case>[]>([
+      { field: 'id', headerName: 'Vaka ID', width: 120, sort: 'desc' },
+      { field: 'title', headerName: 'Başlık', flex: 2, filter: 'agTextColumnFilter' },
+      { field: 'status', headerName: 'Durum', flex: 1, cellRenderer: BadgeCellRenderer, enableRowGroup: true },
+      { field: 'assignee', headerName: 'Atanan', flex: 1, filter: true },
+      { field: 'severity', headerName: 'Risk', flex: 1, cellRenderer: BadgeCellRenderer, enableRowGroup: true },
+      { 
+          field: 'created_at', 
+          headerName: 'Oluşturulma Tarihi', 
+          flex: 1, 
+          valueFormatter: p => new Date(p.value).toLocaleDateString('tr-TR'),
+          filter: 'agDateColumnFilter'
+      },
+  ]);
+
+  const defaultColDef = useMemo<ColDef>(() => ({
+      resizable: true,
+      sortable: true,
+      filter: true,
+      floatingFilter: true,
+  }), []);
+
+  const onExportClick = useCallback(() => {
+      gridRef.current?.api.exportDataAsCsv();
+  }, []);
+
+  const onFilterTextBoxChanged = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      gridRef.current?.api.setGridOption('quickFilterText', e.target.value);
+  }, []);
+
+  if (loading) return <div className="p-8">Vakalar yükleniyor...</div>;
+  if (error) return <div className="p-8 text-red-500">{error}</div>;
+
   return (
-    <div className="p-8">
-      <Card>
-        <table className="w-full text-left text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" className="px-6 py-3">Vaka ID</th>
-              <th scope="col" className="px-6 py-3">Başlık</th>
-              <th scope="col" className="px-6 py-3">Durum</th>
-              <th scope="col" className="px-6 py-3">Atanan</th>
-              <th scope="col" className="px-6 py-3">Risk</th>
-              <th scope="col" className="px-6 py-3">Oluşturulma Tarihi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockCases.map((caseItem) => (
-              <tr 
-                key={caseItem.id} 
-                className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-              >
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{caseItem.id}</td>
-                <td className="px-6 py-4">{caseItem.title}</td>
-                <td className="px-6 py-4"><Badge type={caseItem.status} /></td>
-                <td className="px-6 py-4">{caseItem.assignee}</td>
-                <td className="px-6 py-4"><Badge type={caseItem.severity} /></td>
-                <td className="px-6 py-4">{caseItem.createdAt}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+    <div className="p-8 h-full flex flex-col">
+       <div className="flex-shrink-0 flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+            <div className="relative w-full sm:w-auto">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input 
+                    type="text"
+                    onChange={onFilterTextBoxChanged}
+                    placeholder="Grid'de ara..."
+                    className="pl-10 pr-4 py-2 w-full sm:w-64 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+            </div>
+            <button
+                onClick={onExportClick}
+                className="flex items-center justify-center w-full sm:w-auto bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors shadow-md"
+            >
+                <Download className="w-5 h-5 mr-2" />
+                CSV Olarak Aktar
+            </button>
+        </div>
+       <div className={`flex-grow ${isDark ? 'ag-theme-quartz-dark' : 'ag-theme-quartz'}`}>
+            <AgGridReact
+                ref={gridRef}
+                rowData={cases}
+                columnDefs={columnDefs}
+                defaultColDef={defaultColDef}
+                rowGroupPanelShow={'always'}
+                pagination={true}
+                paginationPageSize={50}
+                paginationPageSizeSelector={[20, 50, 100, 500]}
+                animateRows={true}
+            />
+        </div>
     </div>
   );
 };

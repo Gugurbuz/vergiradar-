@@ -1,6 +1,6 @@
 import React from 'react';
 import { Rule } from '../types';
-import { DatabaseIcon, CogIcon, QuestionMarkCircleIcon, FlagIcon, ArrowRightIcon } from './icons';
+import { Database, Cog, HelpCircle, Flag, ArrowRight } from 'lucide-react';
 
 const Node: React.FC<{ icon: React.ReactNode; label: string; color: string; }> = ({ icon, label, color }) => (
     <div className="flex flex-col items-center text-center mx-4 flex-shrink-0">
@@ -13,7 +13,7 @@ const Node: React.FC<{ icon: React.ReactNode; label: string; color: string; }> =
 
 const Arrow = () => (
     <div className="flex items-center mx-2">
-        <ArrowRightIcon className="w-8 h-8 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+        <ArrowRight size={32} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
     </div>
 );
 
@@ -52,16 +52,16 @@ const logicSteps: Record<string, { process: string; condition: string; }> = {
 };
 
 const RuleLogicFlow: React.FC<{ rule: Rule }> = ({ rule }) => {
-    // FIX: Handle potentially empty/undefined requiredData by providing a fallback and filtering out empty strings.
-    const inputs = (rule.requiredData ?? '')
+    // FIX: Handle potentially empty/undefined required_data by providing a fallback and filtering out empty strings.
+    const inputs = (rule.required_data ?? '')
       .split(',')
       .map(s => s.split('(')[0].trim())
       .filter(Boolean); // This ensures empty strings from ",," or trailing commas are removed.
 
-    // FIX: Handle potentially undefined logicText to prevent runtime errors on slice.
+    // FIX: Handle potentially undefined logic_text to prevent runtime errors on slice.
     const currentLogic = logicSteps[rule.id] || {
         process: (rule.description ?? '').slice(0, 80) || 'Kural işleme',
-        condition: rule.logicText || 'Anomali Tespiti',
+        condition: rule.logic_text || 'Bulgu Tespiti',
     };
 
     return (
@@ -75,7 +75,7 @@ const RuleLogicFlow: React.FC<{ rule: Rule }> = ({ rule }) => {
                             {inputs.map((input) => (
                                 <Node
                                     key={input}
-                                    icon={<DatabaseIcon className="w-10 h-10 text-blue-800 dark:text-blue-200" />}
+                                    icon={<Database size={40} className="text-blue-800 dark:text-blue-200" />}
                                     label={input}
                                     color="bg-blue-200 dark:bg-blue-900/50"
                                 />
@@ -88,7 +88,7 @@ const RuleLogicFlow: React.FC<{ rule: Rule }> = ({ rule }) => {
 
                     <div className="flex flex-col items-center">
                         <Node
-                            icon={<CogIcon className="w-10 h-10 text-purple-800 dark:text-purple-200" />}
+                            icon={<Cog size={40} className="text-purple-800 dark:text-purple-200" />}
                             label={currentLogic.process}
                             color="bg-purple-200 dark:bg-purple-900/50"
                         />
@@ -99,7 +99,7 @@ const RuleLogicFlow: React.FC<{ rule: Rule }> = ({ rule }) => {
 
                     <div className="flex flex-col items-center">
                         <Node
-                            icon={<QuestionMarkCircleIcon className="w-10 h-10 text-yellow-800 dark:text-yellow-200" />}
+                            icon={<HelpCircle size={40} className="text-yellow-800 dark:text-yellow-200" />}
                             label={currentLogic.condition}
                             color="bg-yellow-200 dark:bg-yellow-900/50"
                         />
@@ -110,8 +110,8 @@ const RuleLogicFlow: React.FC<{ rule: Rule }> = ({ rule }) => {
 
                     <div className="flex flex-col items-center">
                          <Node
-                            icon={<FlagIcon className="w-10 h-10 text-red-800 dark:text-red-200" />}
-                            label="Anomali Tespiti"
+                            icon={<Flag size={40} className="text-red-800 dark:text-red-200" />}
+                            label="Bulgu Tespiti"
                             color="bg-red-200 dark:bg-red-900/50"
                         />
                          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-2">ÇIKTI</p>

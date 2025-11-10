@@ -1,5 +1,5 @@
 {
-  "name": "Vergi Anomali Tespit Platformu",
-  "description": "A sophisticated platform for tax auditors and financial professionals to detect anomalies in financial data using rule-based, statistical, machine learning, and network analysis techniques. It includes case management and reporting features to streamline the audit process.",
+  "name": "Vergi Bulgusu Tespit Platformu",
+  "description": "A sophisticated platform for tax auditors and financial professionals to detect findings in financial data using rule-based, statistical, machine learning, and network analysis techniques. It includes case management and reporting features to streamline the audit process.",
   "requestFramePermissions": []
 }

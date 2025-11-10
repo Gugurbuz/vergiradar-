@@ -1,23 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import AuditCenter from './components/AuditCenter';
 import Dashboard from './components/Dashboard';
-import AnomalyList from './components/AnomalyList';
+import BulguList from './components/AnomalyList';
 import CaseList from './components/CaseList';
 import RuleStudio from './components/RuleStudio';
 import AuditWorkspace from './components/AuditWorkspace';
-import { Audit } from './types';
-import { mockCompanies } from './services/mockData';
+import { Audit, AuditedCompany } from './types';
+import * as api from './services/api';
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState('dashboard');
   const [activeAudit, setActiveAudit] = useState<Audit | null>(null);
+  const [auditedCompanies, setAuditedCompanies] = useState<AuditedCompany[]>([]);
+  const [error, setError] = useState<string|null>(null);
+
+  useEffect(() => {
+    api.getCompanies()
+      .then(setAuditedCompanies)
+      .catch(err => setError('Firma verileri yüklenemedi: ' + err.message));
+  }, []);
 
   const viewComponents: Record<string, { component: React.ReactNode; title: string }> = {
     dashboard: { component: <Dashboard />, title: 'Genel Bakış ve Raporlama' },
-    auditCenter: { component: <AuditCenter setActiveAudit={setActiveAudit} />, title: 'Denetim Merkezi' },
-    anomalies: { component: <AnomalyList />, title: 'Anomali Listesi' },
+    auditCenter: { component: <AuditCenter setActiveAudit={setActiveAudit} companies={auditedCompanies} setCompanies={setAuditedCompanies} />, title: 'Denetim Merkezi' },
+    bulgular: { component: <BulguList />, title: 'Bulgu Listesi' },
     cases: { component: <CaseList />, title: 'Vaka Yönetimi' },
     rules: { component: <RuleStudio />, title: 'Kural Stüdyosu' },
   };
@@ -26,12 +34,19 @@ const App: React.FC = () => {
   
   const handleSetAudit = (audit: Audit | null) => {
     setActiveAudit(audit);
-    // When an audit is selected, we might want to switch view or handle other logic
-    // For now, selecting an audit will render the workspace.
-    // Setting it to null will go back to the audit center.
     if (audit) {
       setActiveView('auditCenter'); // Keep sidebar selection on audit center
     }
+  }
+  
+  const mainContent = () => {
+    if (error) {
+      return <div className="p-8 text-red-500 font-semibold">{error}</div>
+    }
+    if (activeAudit) {
+      return <AuditWorkspace audit={activeAudit} onBack={() => handleSetAudit(null)} />;
+    }
+    return currentView.component;
   }
 
   return (
@@ -41,14 +56,10 @@ const App: React.FC = () => {
         <Header 
             title={activeAudit ? `Denetim: ${activeAudit.title}` : currentView.title} 
             activeAudit={activeAudit}
-            auditedCompanies={mockCompanies}
+            auditedCompanies={auditedCompanies}
         />
         <main className="flex-1 overflow-y-auto">
-          {activeAudit ? (
-            <AuditWorkspace audit={activeAudit} onBack={() => handleSetAudit(null)} />
-          ) : (
-            currentView.component
-          )}
+          {mainContent()}
         </main>
       </div>
     </div>

@@ -1,5 +1,5 @@
 {
-  "name": "vergi-anomali-tespit-platformu",
+  "name": "vergi-bulgusu-tespit-platformu",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,7 +11,13 @@
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "recharts": "^3.3.0"
+    "recharts": "^3.3.0",
+    "@supabase/supabase-js": "^2.44.0",
+    "@google/genai": "^0.15.0",
+    "react-grid-layout": "^1.4.0",
+    "lucide-react": "^0.41.0",
+    "ag-grid-community": "^34.3.1",
+    "ag-grid-react": "^31.3.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
